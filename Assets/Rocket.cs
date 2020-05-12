@@ -10,6 +10,8 @@ public class Rocket : MonoBehaviour
     [SerializeField] float mainThrust = 100f;
     [SerializeField] float levelLoadDelay = 2f;
 
+    public static Vector3 rocketPos;
+
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip WinSound;
     [SerializeField] AudioClip CrashSound;
@@ -35,6 +37,7 @@ public class Rocket : MonoBehaviour
     {
         if( state == State.Alive)
         {
+            rocketPos = transform.position;
             RespondToThrustInput();
             HandleRotation();
         }

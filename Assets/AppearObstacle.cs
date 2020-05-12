@@ -16,6 +16,9 @@ public class AppearObstacle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(Rocket.rocketPos.x >= 21.5f )
+        {
+            transform.position = startingPos + moveFactor;
+        }
     }
 }
