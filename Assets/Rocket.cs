@@ -11,6 +11,7 @@ public class Rocket : MonoBehaviour
     [SerializeField] float levelLoadDelay = 2f;
 
     public static Vector3 rocketPos;
+    bool collisionsAreDisabled = false;
 
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip WinSound;
@@ -19,6 +20,8 @@ public class Rocket : MonoBehaviour
     [SerializeField] ParticleSystem mainEngineParticle;
     [SerializeField] ParticleSystem successParticle;
     [SerializeField] ParticleSystem deathParticle;
+
+    int lives = 3;
 
     enum State {Dying, Transcending, Alive};
     State state = State.Alive;
@@ -41,11 +44,28 @@ public class Rocket : MonoBehaviour
             RespondToThrustInput();
             HandleRotation();
         }
+
+        if(Debug.isDebugBuild)
+        {
+            RespondToDebug();
+        }
+    }
+
+    void RespondToDebug()
+    {
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+        else if(Input.GetKeyDown(KeyCode.C))
+        {
+            collisionsAreDisabled = !collisionsAreDisabled;
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if( state != State.Alive) { return; }
+        if( state != State.Alive || collisionsAreDisabled) { return; }
 
         switch (collision.gameObject.tag)
         {
@@ -83,7 +103,13 @@ public class Rocket : MonoBehaviour
 
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(1);
+        int currentScene = SceneManager.GetActiveScene().buildIndex;
+        int nextScene = currentScene + 1;
+        if(nextScene == SceneManager.sceneCountInBuildSettings)
+        {
+            nextScene = 0;
+        }
+        SceneManager.LoadScene(nextScene);
     }
 
     private void LoadFirstLevel()
