@@ -21,8 +21,6 @@ public class Rocket : MonoBehaviour
     [SerializeField] ParticleSystem successParticle;
     [SerializeField] ParticleSystem deathParticle;
 
-    int lives = 3;
-
     enum State {Dying, Transcending, Alive};
     State state = State.Alive;
 
@@ -78,7 +76,8 @@ public class Rocket : MonoBehaviour
                 break;    
             
             default:
-               StartdeathSequence(); 
+
+                StartdeathSequence();
                 break;
         }
     }
@@ -98,7 +97,14 @@ public class Rocket : MonoBehaviour
         audioSource.Stop();
         audioSource.PlayOneShot(CrashSound);
         deathParticle.Play();
-        Invoke("LoadFirstLevel", levelLoadDelay);
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            Invoke("LoadFirstLevel", levelLoadDelay);
+        }
+        else
+        {
+            Invoke("LoadPreviousLevel", levelLoadDelay);
+        }
     }
 
     private void LoadNextLevel()
@@ -115,6 +121,13 @@ public class Rocket : MonoBehaviour
     private void LoadFirstLevel()
     {
         SceneManager.LoadScene(0);
+    }
+
+    private void LoadPreviousLevel()
+    {
+        int currentScene = SceneManager.GetActiveScene().buildIndex;
+        int previousScene = currentScene - 1;
+        SceneManager.LoadScene(previousScene);
     }
 
     private void RespondToThrustInput()
